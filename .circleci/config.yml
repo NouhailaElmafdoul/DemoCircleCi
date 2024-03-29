@@ -1,37 +1,36 @@
 version: 2.1
 
+orbs:
+  sonarscanner: psl/sonarscanner@0.0.4
+
 jobs:
-  build:
+  # Sonarqube scanner   
+  scan:
     docker:
-      - image: circleci/openjdk:8-jdk
-
+      - image: circleci/openjdk:11.0-jdk
+    working_directory: /tmp/workspace
+    environment:
+      ENV_FILE: /tmp/workspace/.circleenv
+      DOCKER_BUILDKIT: "1"
+      BUILDKIT_PROGRESS: plain       
     steps:
-      - checkout
-
-      # Install SonarQube Scanner
+      - checkout  
+      - attach_workspace:
+          at: /tmp/workspace    
       - run:
-          name: Download and install SonarQube Scanner
+          name: Install Sonarqube scanner 
           command: |
-            curl -sSL -o /tmp/sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            sudo unzip -d /opt /tmp/sonar-scanner-cli.zip
-            sudo mv /opt/sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner
-
-      # Setup SonarQube properties
+              sudo apt-get update
+              sudo apt-get install -y openjdk-11-jdk
+              wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+              unzip sonar-scanner.zip
+              rm sonar-scanner.zip
       - run:
-          name: Setup SonarQube properties
+          name: Run Sonarscanner
           command: |
-            sudo chown -R $USER:$USER /opt/sonar-scanner
-            echo "sonar.host.url=http://localhost:9000" | sudo tee -a /opt/sonar-scanner/conf/sonar-scanner.properties
-            echo "sonar.login=${SONAR_TOKEN}" | sudo tee -a /opt/sonar-scanner/conf/sonar-scanner.properties
+              export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
+              sonar-scanner \
+              -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
+              -Dsonar.host.url=https://sonarqube.com/ \
+              -Dsonar.login=sqa_0ff606d1a0ced5a056aad75f4715402561f4c37e
 
-      # Run SonarQube analysis with debug logging
-      - run:
-          name: Run SonarQube analysis
-          command: |
-            /opt/sonar-scanner/bin/sonar-scanner -X
-
-workflows:
-  version: 2
-  build_and_analyze:
-    jobs:
-      - build
