@@ -20,20 +20,20 @@ jobs:
       - run:
           name: Télécharger et installer SonarQube scanner
           command: |
-            curl -o sonar-scanner.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-windows.zip
-            Expand-Archive -Path sonar-scanner.zip -DestinationPath sonar-scanner
-            Remove-Item sonar-scanner.zip
+            wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            unzip sonar-scanner.zip
+            rm sonar-scanner.zip
       - run:
           name: Run Sonarscanner
           command: |
-            $env:PATH = "$env:PATH;$(Get-Location)\sonar-scanner\bin"
-            sonar-scanner -X `
-            -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME `
-            -Dsonar.host.url=http://localhost:9000 `
+            export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
+            sonar-scanner -X \
+            -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
+            -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
 workflows:
   version: 2
   main:
     jobs:
-      - scan
+      - scan
