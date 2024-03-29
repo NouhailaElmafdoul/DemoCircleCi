@@ -27,9 +27,9 @@ jobs:
           name: Exécuter SonarQube scanner avec débogage
           command: |
             export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
-          sonar-scanner -Dsonar.host.url=https:http://localhost:9000/
+            sonar-scanner -X \
               -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
-              -Dsonar.host.url=https://sonarqube.com/ \
+              -Dsonar.host.url=http://localhost:9000/ \
               -Dsonar.login=$SONAR_TOKEN  
 
 workflows: 
