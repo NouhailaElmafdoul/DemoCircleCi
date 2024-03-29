@@ -36,4 +36,4 @@ workflows:
   version: 2
   main:
     jobs:
-      - scan
+      - scan
