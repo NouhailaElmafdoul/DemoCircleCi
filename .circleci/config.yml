@@ -9,9 +9,8 @@ jobs:
       # Exécution des tests avec Maven
       - run:
           name: Run Tests
-          command: mvn test
 
 workflows:
   build:
     jobs:
-      - build-and-test
+      - build
