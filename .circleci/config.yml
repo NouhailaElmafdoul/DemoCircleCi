@@ -7,7 +7,21 @@ jobs:
     steps:
       - checkout
 
+  sonarqube:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run:
+          name: SonarQube Scan
+          command: |
+            ./gradlew sonarqube \
+              -Dsonar.projectKey=your_project_key \
+              -Dsonar.host.url=https://your_sonarqube_instance \
+              -Dsonar.login=$SONAR_TOKEN
+
 workflows:
   build:
     jobs:
       - build-and-test
+      - sonarqube
