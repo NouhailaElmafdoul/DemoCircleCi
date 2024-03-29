@@ -32,3 +32,9 @@ jobs:
             -Dsonar.projectName='demoProject' \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.login=sqp_10f26cbe158cb8647b658f811072ff82fda5d9f4
+
+workflows:
+  version: 2
+  build_and_scan:
+    jobs:
+      - scan
