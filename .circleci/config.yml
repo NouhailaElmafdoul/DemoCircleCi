@@ -24,12 +24,13 @@ jobs:
             unzip sonar-scanner.zip
             rm sonar-scanner.zip
       - run:
-    name: Run SonarQube Scanner
-    command: |
-      "C:\\sonarqube-10.4.1.88267\\bin\\windows-x86-64\\sonar-scanner.bat" ^
-      -Dsonar.projectKey=%CIRCLE_BRANCH%:%CIRCLE_PROJECT_REPONAME% ^
-      -Dsonar.host.url=http://localhost:9000 ^
-      -Dsonar.login=%SONAR_TOKEN%
+          name: Run Sonarscanner
+          command: |
+            export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
+            sonar-scanner \
+            -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=$SONAR_TOKEN
 
 workflows: 
   version: 2
