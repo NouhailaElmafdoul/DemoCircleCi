@@ -6,6 +6,10 @@ jobs:
       - image: cimg/openjdk:11.0
     steps:
       - checkout
+      # Exécution des tests avec Maven
+      - run:
+          name: Run Tests
+          command: mvn test
 
 workflows:
   build:
