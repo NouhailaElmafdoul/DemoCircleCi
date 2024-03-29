@@ -1,5 +1,3 @@
-version: 2.1
-
 jobs:
   build-and-test:
     docker:
@@ -10,4 +8,4 @@ jobs:
 workflows:
   build:
     jobs:
-      - build
+      - build-and-test
