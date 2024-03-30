@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Exécuter SonarScanner
           command: |
-            ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner \
+            ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -X \
               -Dsonar.projectKey=demoProject \
               -Dsonar.sources=. \
               -Dsonar.host.url=http://localhost:9000 \
