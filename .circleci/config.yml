@@ -1,38 +1,57 @@
 version: 2.1
 
-orbs:
-  sonarscanner: psl/sonarscanner@0.0.4
-
 jobs:
   build:
     docker:
       - image: circleci/openjdk:11.0-jdk
     steps:
       - checkout
-      # Ajoutez ici les étapes pour la construction de votre projet
+      # Étapes de construction de l'application
 
-  sonarqube-scan:
+  deploy-test:
     docker:
       - image: circleci/openjdk:11.0-jdk
     steps:
       - checkout
       - run:
-          name: Télécharger et installer SonarScanner
+          name: Deploy to Test Environment
           command: |
-            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+            # Étapes de déploiement vers l'environnement de test
+            echo "Deploying to Test Environment..."
+
+  deploy-staging:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - checkout
       - run:
-          name: Exécuter SonarScanner
+          name: Deploy to Staging Environment
           command: |
-            ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -X \
-              -Dsonar.host.url=http://localhost:9000 \
-              -Dsonar.projectKey=demoProject \
-              -Dsonar.projectName=demoProject \
-              -Dsonar.projectVersion=1.0
+            # Étapes de déploiement vers l'environnement de staging
+            echo "Deploying to Staging Environment..."
+
+  deploy-production:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Production Environment
+          command: |
+            # Étapes de déploiement vers l'environnement de production
+            echo "Deploying to Production Environment..."
 
 workflows:
   version: 2
-  main:
+  deploy:
     jobs:
       - build
-      - sonarqube-scan
+      - deploy-test:
+          requires:
+            - build
+      - deploy-staging:
+          requires:
+            - deploy-test
+      - deploy-production:
+          requires:
+            - deploy-staging
