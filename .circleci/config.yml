@@ -21,3 +21,12 @@ jobs:
           command: |
             wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
             unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+
+         - run:
+          name: Exécuter SonarScanner
+          command: |
+            ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -X \
+              -Dsonar.projectKey=demoProject \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=http://localhost:9000 \
+              -Dsonar.login=sqb_c2ecb6ef393ec82578a31c3951ce0c2c2f10fd2d
