@@ -30,3 +30,9 @@ jobs:
               -Dsonar.sources=. \
               -Dsonar.host.url=http://localhost:9000 \
               -Dsonar.login=sqb_c2ecb6ef393ec82578a31c3951ce0c2c2f10fd2d
+        workflows:
+  version: 2
+  main:
+    jobs:
+      - build
+      - sonarqube-scan
