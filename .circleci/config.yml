@@ -11,6 +11,16 @@ jobs:
       - checkout
       # Ajoutez ici les étapes pour la construction de votre projet
 
+  sonarqube-connectivity-test:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - checkout
+      - run:
+          name: Test de connectivité à SonarQube
+          command: |
+            curl -v http://localhost:9000
+
   sonarqube-scan:
     docker:
       - image: circleci/openjdk:11.0-jdk
@@ -25,14 +35,16 @@ jobs:
           name: Exécuter SonarScanner
           command: |
             ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -X \
-              -Dsonar.host.url=http://localhost:9000 \
-              -Dsonar.projectKey=demoProject \
-              -Dsonar.projectName=demoProject \
-              -Dsonar.projectVersion=1.0
+              # sonar-scanner.properties
+              sonar.host.url=http://localhost:9000
+              sonar.projectKey=demoProject
+              sonar.projectName=demoProject
+              sonar.projectVersion=1.0
 
 workflows:
   version: 2
   main:
     jobs:
       - build
+      - sonarqube-connectivity-test
       - sonarqube-scan
