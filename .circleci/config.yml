@@ -16,3 +16,8 @@ jobs:
       - run:
           name: Run SonarQube Analysis
           command: sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqa_71bbb87c32ff59d42fdbc71a4793b30e76c79763
+workflows:
+  version: 2
+  build_and_analyze:
+    jobs:
+      - build
