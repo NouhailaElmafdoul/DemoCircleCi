@@ -6,7 +6,7 @@ jobs:
       - image: circleci/openjdk:11
     steps:
       - checkout
-      ommand: |
+      command: |
             sudo apt-get update && sudo apt-get install -y unzip
             wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip
             unzip sonar-scanner-cli-4.6.0.2311-linux.zip
