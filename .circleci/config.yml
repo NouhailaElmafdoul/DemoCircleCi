@@ -1,40 +1,33 @@
-version: 2.1
-
-orbs:
-  sonarscanner: psl/sonarscanner@0.0.4
-
 jobs:
-  # Job pour scanner avec SonarQube
-  scan:
+  build:
     docker:
-      - image: cimg/openjdk:17.0
-    working_directory: /tmp/workspace
-    environment:
-      ENV_FILE: /tmp/workspace/.circleenv
-      DOCKER_BUILDKIT: "1"
-      BUILDKIT_PROGRESS: plain       
+      - image: circleci/openjdk:11.0-jdk
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
+      # Ajoutez ici les étapes pour la construction de votre projet
+
+  sonarqube-scan:
+    docker:
+      - image: circleci/openjdk:11.0-jdk
+    steps:
+      - checkout
       - run:
           name: Télécharger et installer SonarQube scanner
           command: |
-            wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip sonar-scanner.zip
-            rm sonar-scanner.zip
+            wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            unzip sonar-scanner-cli-4.6.2.2472-linux.zip
       - run:
-          name: Run Sonarscanner
+          name: Exécuter SonarScanner
           command: |
-            export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
-            sonar-scanner -h \
-            -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=$SONAR_TOKEN
+            ./sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -h \
+              -Dsonar.projectKey=demoProject \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=http://localhost:9000 \
+              -Dsonar.login=sqb_c2ecb6ef393ec82578a31c3951ce0c2c2f10fd2d
 
-workflows: 
+workflows:
   version: 2
   main:
     jobs:
-      - scan:
-          context: sonarqube
+      - build
+      - sonarqube-sc
