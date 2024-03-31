@@ -4,59 +4,36 @@ orbs:
   sonarscanner: psl/sonarscanner@0.0.4
 
 jobs:
-  build_test:
-    docker:
-      - image: circleci/openjdk:11.0
-    steps:
-      - checkout
-      - run:
-          name: Install npm dependencies
-          command: |
-            npm install --save
-
-  build_docker_image:
-    docker:
-      - image: circleci/openjdk:11.0
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - run:
-          name: Build Docker image
-          command: |
-            docker build -t demo_nodejs_circleci -t kawtar2004/demo_nodejs_circleci:latest .
-            echo $DOCKER_PASSWORD | docker login -u kawtar2004 --password-stdin
-            docker push kawtar2004/demo_nodejs_circleci:latest
-
+  # Sonarqube scanner   
   scan:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: circleci/openjdk:11.0
+    working_directory: /tmp/workspace
+    environment:
+      ENV_FILE: /tmp/workspace/.circleenv
+      DOCKER_BUILDKIT: "1"
+      BUILDKIT_PROGRESS: plain       
     steps:
-      - checkout
+      - checkout  
       - attach_workspace:
-          at: /tmp/workspace
+          at: /tmp/workspace    
       - run:
-          name: Télécharger et installer SonarQube scanner
+          name: Install Sonarqube scanner 
           command: |
-            export SONAR_SCANNER_VERSION=4.7.0.2747
-            export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
-            curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
-            unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
-            export PATH=$SONAR_SCANNER_HOME/bin:$PATH
-            export SONAR_SCANNER_OPTS="-server"
-
+              wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+              unzip sonar-scanner.zip
+              rm sonar-scanner.zip
       - run:
-          name: Exécuter SonarScanner
+          name: Run Sonarscanner
           command: |
-           sonar-scanner -X \
-             -Dsonar.projectKey=demo_nodejs_circleci \
-             -Dsonar.sources=. \
-             -Dsonar.host.url=http://localhost:9000
+              export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
+              sonar-scanner -X \
+              -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
+              -Dsonar.host.url=https://sonarqube.com/ \
+              -Dsonar.login=$SONAR_TOKEN  
 
-workflows:
+workflows: 
   version: 2
-  build_test:
+  main:
     jobs:
-      - build_test
-      - build_docker_image
-      - scan
+       - scan
