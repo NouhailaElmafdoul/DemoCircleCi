@@ -54,4 +54,4 @@ workflows:
             - deploy-test
       - deploy-production:
           requires:
-            - deploy-staging
+            - deploy-staging
