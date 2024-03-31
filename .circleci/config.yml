@@ -6,8 +6,7 @@ jobs:
       - image: circleci/openjdk:11.0-jdk
     steps:
       - checkout
-      # Étapes de construction de l'application
-
+      
   deploy-test:
     docker:
       - image: circleci/openjdk:11.0-jdk
@@ -16,7 +15,7 @@ jobs:
       - run:
           name: Deploy to Test Environment
           command: |
-            # Étapes de déploiement vers l'environnement de test
+            
             echo "Deploying to Test Environment..."
 
   deploy-staging:
@@ -27,7 +26,7 @@ jobs:
       - run:
           name: Deploy to Staging Environment
           command: |
-            # Étapes de déploiement vers l'environnement de staging
+            
             echo "Deploying to Staging Environment..."
 
   deploy-production:
